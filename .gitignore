@@ -10,21 +10,3 @@ Cargo.lock
 /etc/secrets/
 C:/secrets/
 secrets/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-logs/
-
-# Fly.io
-fly.toml

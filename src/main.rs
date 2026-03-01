@@ -70,29 +70,6 @@ async fn main() {
 
     let settings: ChatSettingsStore = Arc::new(tokio::sync::RwLock::new(HashMap::new()));
 
-    // Запускаем HTTP-сервер для health check (требуется Render для Web Service)
-    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
-    let addr = format!("0.0.0.0:{}", port);
-
-    let (tx, rx) = tokio::sync::oneshot::channel();
-
-    // Запускаем health check сервер
-    tokio::spawn(async move {
-        use axum::{Router, routing::get};
-
-        let app = Router::new().route("/health", get(|| async { "OK" }));
-
-        let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-        log::info!("Health check server listening on {}", addr);
-
-        tx.send(()).unwrap();
-
-        axum::serve(listener, app).await.unwrap();
-    });
-
-    // Ждём пока сервер запустится
-    rx.await.unwrap();
-
     log::info!("Starting with long polling mode");
     start_with_polling(bot, settings).await;
 }

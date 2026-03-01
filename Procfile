@@ -1,1 +1,1 @@
-web: ./target/release/random_roll_bot
+app: ./target/release/random_roll_bot
