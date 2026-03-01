@@ -14,12 +14,12 @@ async fn main() {
     // 2. ./secrets/.env (относительно корня проекта)
     // 3. .env (текущая директория)
     let secrets_path_unix = std::path::Path::new("/etc/secrets/.env");
-    
+
     // Ищем secrets/.env начиная от текущей директории и поднимаясь вверх
     let secrets_path_relative = find_secrets_file();
-    
+
     log::info!("Looking for secrets at: {:?}", secrets_path_relative);
-    
+
     if secrets_path_unix.exists() {
         dotenvy::from_path(secrets_path_unix).ok();
         log::info!("Loaded secrets from /etc/secrets/.env");
