@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     environment:
-      - RUST_LOG=info
+      - RUST_LOG=debug
     networks:
       - bot-network
 

@@ -1,4 +1,4 @@
-FROM rust:1.75-slim-bookworm as builder
+FROM rust:latest as builder
 
 WORKDIR /app
 
@@ -14,6 +14,23 @@ FROM debian:bookworm-slim as runtime
 
 WORKDIR /app
 
+# Устанавливаем необходимые библиотеки
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/target/release/random_roll_bot /app/random_roll_bot
 
-CMD ["./random_roll_bot"]
+# Добавляем скрипт для отладки
+RUN echo '#!/bin/bash\n\
+    echo "Starting bot..."\n\
+    echo "Environment:"\n\
+    printenv | grep -E "(TELEGRAM|RUST_LOG)"\n\
+    echo "Current directory: $(pwd)"\n\
+    echo "Files in current directory:"\n\
+    ls -la\n\
+    echo "Running binary..."\n\
+    exec ./random_roll_bot' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]
