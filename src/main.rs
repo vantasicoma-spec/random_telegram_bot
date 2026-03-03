@@ -6,6 +6,9 @@ use teloxide::prelude::*;
 
 use commands::{cmd_coin, cmd_help, cmd_roll, ChatSettingsStore};
 
+/// Имя бота для обработки команд с суффиксом (например, /roll@randoms_roll_bot)
+const BOT_USERNAME: &str = "randoms_roll_bot";
+
 #[tokio::main]
 async fn main() {
     // Загрузка .env файла из секретов
@@ -99,22 +102,31 @@ async fn handle_message(
     settings: ChatSettingsStore,
 ) -> Result<(), teloxide::RequestError> {
     let text = msg.text().unwrap_or("");
+    
+    let first_arg = text.split_whitespace().next().unwrap_or("");
+    let command = if let Some(at_pos) = first_arg.find('@') {
+        &first_arg[..at_pos]
+    } else {
+        first_arg
+    };
+    
     let args: Vec<&str> = text.split_whitespace().collect();
+    let args_without_command = &args[1..];
 
     log::debug!("Received message: '{}' from chat {}", text, msg.chat.id);
-    log::debug!("Args: {:?}", args);
+    log::debug!("Command: '{}', Args: {:?}", command, args_without_command);
 
     if args.is_empty() {
         return Ok(());
     }
 
-    match args[0] {
+    match command {
         "/help" => {
             log::info!("Handling /help command");
             cmd_help(bot, msg).await
         }
         "/roll" => {
-            log::info!("Handling /roll command with args: {:?}", &args[1..]);
+            log::info!("Handling /roll command with args: {:?}", args_without_command);
             cmd_roll(bot, msg, settings).await
         }
         "/coin" => {
