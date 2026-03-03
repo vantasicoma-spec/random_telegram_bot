@@ -14,6 +14,7 @@ pub async fn cmd_help(bot: Bot, msg: Message) -> Result<(), teloxide::RequestErr
 /roll 1 10 \- число от 1 до 10✅
 /roll 0 200 \- число от 0 до 200✅
 /roll \-1 10 \- число от \-1 до 10✅
+/roll@randoms\_roll\_bot 11 44 \- число от 11 до 44✅
 /roll 22 1 \- неверный диапазон 22 больше 1❌"#;
 
     bot.send_message(msg.chat.id, help_text)

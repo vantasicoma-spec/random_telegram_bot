@@ -102,14 +102,19 @@ async fn handle_message(
     settings: ChatSettingsStore,
 ) -> Result<(), teloxide::RequestError> {
     let text = msg.text().unwrap_or("");
-    
+
     let first_arg = text.split_whitespace().next().unwrap_or("");
     let command = if let Some(at_pos) = first_arg.find('@') {
-        &first_arg[..at_pos]
+        let suffix = &first_arg[at_pos + 1..];
+        if suffix == BOT_USERNAME {
+            &first_arg[..at_pos]
+        } else {
+            first_arg
+        }
     } else {
         first_arg
     };
-    
+
     let args: Vec<&str> = text.split_whitespace().collect();
     let args_without_command = &args[1..];
 
